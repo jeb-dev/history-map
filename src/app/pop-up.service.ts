@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import {Place} from "./model/place.model";
 
 @Injectable({
   providedIn: 'root'
@@ -7,9 +8,11 @@ export class PopUpService {
 
   constructor() { }
 
-  makePointPopup(data: any): string {
+  makePointPopup(place: Place): string {
     return `` +
-      `<div>Capital: ${ data.name }</div>`;
+      `<div>Name : ${ place.name }</div>` +
+      `<div>address : ${ place.address }</div>` +
+      `<div>visite nbr : ${place.visits.length} </div>`;
   }
 
 }

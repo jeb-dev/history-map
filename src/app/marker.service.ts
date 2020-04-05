@@ -2,27 +2,39 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import * as L from 'leaflet';
 import {PopUpService} from "./pop-up.service";
+import {Place, Visit} from "./model/place.model";
 
 @Injectable({
   providedIn: 'root'
 })
 export class MarkerService {
 
-  capitals: string = '/assets/test.geojson';
   MARCH: string = '/assets/2020_MARCH.json';
 
   constructor(private http: HttpClient,
               private popUpService: PopUpService) { }
 
   makePointMarkers(map: L.map): void {
-    this.http.get(this.capitals).subscribe((res: any) => {
-      for (const c of res.features) {
-        const lat = c.geometry.coordinates[0];
-        const lon = c.geometry.coordinates[1];
-        const marker = L.marker([lon, lat]);
-        let pointPopup = this.popUpService.makePointPopup(c);
+    this.http.get(this.MARCH).subscribe((res: any) => {
+      let places = new Map<String, Place>();
+
+      for (const c of res.timelineObjects) {
+        if(c.placeVisit != null) {
+          let placeId = c.placeVisit.location.placeId;
+          if(places.has(placeId)){
+            let place: Place = places.get(placeId);
+            place.addVisit(Visit.fromPlaceVisit(c.placeVisit));
+          } else {
+            places.set(placeId, Place.fromPlaceVisit(c.placeVisit));
+          }
+        }
+      }
+
+      for (const p of places.values()) {
+        const marker = L.marker([p.latitude, p.longitude]);
+        let pointPopup = this.popUpService.makePointPopup(p);
         marker.bindPopup(pointPopup);
-        marker.addTo(map)
+        marker.addTo(map);
       }
     });
   }
