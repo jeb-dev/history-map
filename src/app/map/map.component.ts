@@ -15,7 +15,6 @@ export class MapComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.initMap();
-    console.log("Before makePoint")
     this.markerService.makePointMarkers(this.map);
   }
 

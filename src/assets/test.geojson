@@ -4,6 +4,7 @@
     {
       "type": "Feature",
       "properties": {},
+      "name" : "point 1",
       "geometry": {
         "type": "Point",
         "coordinates": [
@@ -15,6 +16,7 @@
     {
       "type": "Feature",
       "properties": {},
+      "name" : "point 2",
       "geometry": {
         "type": "Point",
         "coordinates": [
@@ -26,6 +28,7 @@
     {
       "type": "Feature",
       "properties": {},
+      "name" : "point 3",
       "geometry": {
         "type": "Point",
         "coordinates": [

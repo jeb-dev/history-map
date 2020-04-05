@@ -6,6 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MapComponent } from './map/map.component';
 import {MarkerService} from "./marker.service";
+import {PopUpService} from "./pop-up.service";
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import {MarkerService} from "./marker.service";
     HttpClientModule
   ],
   providers: [
-    MarkerService
+    MarkerService,
+    PopUpService
   ],
   bootstrap: [AppComponent]
 })
