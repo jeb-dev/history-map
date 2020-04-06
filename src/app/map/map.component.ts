@@ -11,6 +11,7 @@ import {LoadMapService} from "../load-map.service";
 })
 export class MapComponent implements AfterViewInit {
   private map;
+  private uploadedFiles: Array <File>;
 
   constructor(private loadMapService: LoadMapService,
               private  markerService: MarkerService) { }
@@ -18,10 +19,6 @@ export class MapComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.initMap();
     this.markerService.makePointMarkers(this.map);
-  }
-
-  reloadDB() {
-    this.loadMapService.loadMapAndFillDB();
   }
 
   reloadMap() {
@@ -57,4 +54,19 @@ export class MapComponent implements AfterViewInit {
 
   }
 
+  fileChange(element) {
+    this.uploadedFiles = element.target.files;
+  }
+
+  upload() {
+    let formData = new FormData();
+    for (var i = 0; i < this.uploadedFiles.length; i++) {
+      formData.append("uploads[]", this.uploadedFiles[i], this.uploadedFiles[i].name);
+      let fileReader = new FileReader();
+      fileReader.onload = (e) => {
+        this.loadMapService.saveTakeoutPlaces(JSON.parse(fileReader.result.toString()));
+      };
+      fileReader.readAsText(this.uploadedFiles[i]);
+    }
+  }
 }

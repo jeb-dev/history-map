@@ -10,36 +10,36 @@ export class LoadMapService {
 
   MARCH: string = '/assets/2020_MARCH.json';
 
-  constructor(private http: HttpClient,
-              private dbService: NgxIndexedDBService) { }
+  constructor(private dbService: NgxIndexedDBService) { }
 
-  public loadMapAndFillDB(){
-    this.http.get(this.MARCH).subscribe((res: any) => {
-      let places = new Map<String, Place>();
+  public saveTakeoutPlaces(res: any) {
+    let places = new Map<String, Place>();
 
-      for (const c of res.timelineObjects) {
-        if (c.placeVisit != null) {
-          let placeId = c.placeVisit.location.placeId;
-          if (places.has(placeId)) {
-            let place: Place = places.get(placeId);
-            place.addVisit(Visit.fromPlaceVisit(c.placeVisit));
-          } else {
-            places.set(placeId, Place.fromPlaceVisit(c.placeVisit));
-          }
+    console.log(res.timelineObjects);
+    for (const c of res.timelineObjects) {
+      if (c.placeVisit != null) {
+        let placeId = c.placeVisit.location.placeId;
+        if (places.has(placeId)) {
+          let place: Place = places.get(placeId);
+          place.addVisit(Visit.fromPlaceVisit(c.placeVisit));
+        } else {
+          places.set(placeId, Place.fromPlaceVisit(c.placeVisit));
         }
       }
+    }
+    console.log(places.size);
 
-      for (const p of places.values()) {
-        this.dbService.add('places', p).then(
-          () => {
-            console.log('add OK', p);
-          },
-          error => {
-            console.error("failed to add", error);
-          }
-        );
-      }
-    });
+    this.saveInDB(places);
   }
 
+  private saveInDB(places: Map<String, Place>) {
+    for (const p of places.values()) {
+      this.dbService.add('places', p).then(
+        () => {},
+        error => {
+          console.error("failed to add", error);
+        }
+      );
+    }
+  }
 }
