@@ -2,6 +2,7 @@ import { AfterViewInit, Component } from '@angular/core';
 
 import * as L from 'leaflet';
 import { MarkerService } from "../marker.service";
+import {LoadMapService} from "../load-map.service";
 
 @Component({
   selector: 'app-map',
@@ -11,10 +12,19 @@ import { MarkerService } from "../marker.service";
 export class MapComponent implements AfterViewInit {
   private map;
 
-  constructor(private  markerService: MarkerService) { }
+  constructor(private loadMapService: LoadMapService,
+              private  markerService: MarkerService) { }
 
   ngAfterViewInit(): void {
     this.initMap();
+    this.markerService.makePointMarkers(this.map);
+  }
+
+  reloadDB() {
+    this.loadMapService.loadMapAndFillDB();
+  }
+
+  reloadMap() {
     this.markerService.makePointMarkers(this.map);
   }
 
