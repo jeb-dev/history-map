@@ -25,6 +25,14 @@ const dbConfig: DBConfig  = {
       { name: 'address', keypath: 'address', options: { unique: false} },
       { name: 'visits', keypath: 'visits', options: { unique: false} },
     ]
+  },{
+    store: 'visits',
+    storeConfig: { keyPath: 'id', autoIncrement: true },
+    storeSchema: [
+      { name: 'placeId', keypath: 'placeId', options: { unique: false} },
+      { name: 'arrivedDate', keypath: 'arrivedDate', options: { unique: true} },
+      { name: 'durationStay', keypath: 'durationStay', options: { unique: false} },
+    ]
   }]
 };
 

@@ -60,6 +60,7 @@ export class MapComponent implements AfterViewInit {
 
   upload() {
     let formData = new FormData();
+    console.log(this.uploadedFiles.length);
     for (var i = 0; i < this.uploadedFiles.length; i++) {
       formData.append("uploads[]", this.uploadedFiles[i], this.uploadedFiles[i].name);
       let fileReader = new FileReader();

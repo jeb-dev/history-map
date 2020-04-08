@@ -1,16 +1,4 @@
-export class Visit {
-  arrivedDate: Date;
-  durationStay: number; //in seconds
-
-  static fromPlaceVisit(placeVisit: any): Visit {
-    let visit = new Visit();
-    visit.arrivedDate = placeVisit.duration.startTimestampMs;
-    visit.durationStay = (placeVisit.duration.endTimestampMs - placeVisit.duration.startTimestampMs)/1000;
-    return visit;
-  }
-
-}
-
+import {Visit} from "./visit.model";
 
 export class Place {
   id: string;
