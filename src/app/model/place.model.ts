@@ -13,16 +13,12 @@ export class Visit {
 
 
 export class Place {
-  private id: string;
+  id: string;
   longitude: number;
   latitude: number;
   name: string;
   address: string;
   visits: Visit[] = [];
-
-  addVisit(v: Visit) {
-    this.visits.push(v);
-  }
 
   static fromPlaceVisit(placeVisit: any): Place {
     let place = new Place();
@@ -32,7 +28,7 @@ export class Place {
     place.latitude = placeVisit.location.latitudeE7/E7;
     place.name = placeVisit.location.name;
     place.address = placeVisit.location.address;
-    place.addVisit(Visit.fromPlaceVisit(placeVisit));
+    place.visits.push(Visit.fromPlaceVisit(placeVisit));
     return place;
   }
 }

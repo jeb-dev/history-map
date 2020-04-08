@@ -8,31 +8,34 @@ import {HttpClient} from "@angular/common/http";
 })
 export class LoadMapService {
 
-  MARCH: string = '/assets/2020_MARCH.json';
-
   constructor(private dbService: NgxIndexedDBService) { }
 
   public saveTakeoutPlaces(res: any) {
     let places = new Map<String, Place>();
 
-    console.log(res.timelineObjects);
-    for (const c of res.timelineObjects) {
-      if (c.placeVisit != null) {
-        let placeId = c.placeVisit.location.placeId;
-        if (places.has(placeId)) {
-          let place: Place = places.get(placeId);
-          place.addVisit(Visit.fromPlaceVisit(c.placeVisit));
-        } else {
-          places.set(placeId, Place.fromPlaceVisit(c.placeVisit));
+    this.dbService.getAll('places').then(
+      (list: Place[]) => {
+        for (const p of list) {
+          places.set(p.id, p);
         }
+        for (const c of res.timelineObjects) {
+          if (c.placeVisit != null) {
+            let placeId = c.placeVisit.location.placeId;
+            if (places.has(placeId)) {
+              let place: Place = places.get(placeId);
+              place.visits.push(Visit.fromPlaceVisit(c.placeVisit));
+            } else {
+              places.set(placeId, Place.fromPlaceVisit(c.placeVisit));
+            }
+          }
+        }
+        this.saveInDB(places);
       }
-    }
-    console.log(places.size);
-
-    this.saveInDB(places);
+    );
   }
 
   private saveInDB(places: Map<String, Place>) {
+    this.dbService.clear('places');
     for (const p of places.values()) {
       this.dbService.add('places', p).then(
         () => {},
