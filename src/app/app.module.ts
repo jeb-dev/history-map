@@ -10,6 +10,12 @@ import {PopUpService} from "./pop-up.service";
 
 import {DBConfig, NgxIndexedDBModule} from 'ngx-indexed-db';
 import {LoadMapService} from "./load-map.service";
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
+import {MatButtonModule} from "@angular/material/button";
+import {MatCardModule} from "@angular/material/card";
+import {MatInputModule} from "@angular/material/input";
 
 const dbConfig: DBConfig  = {
   name: 'DB_PLACES',
@@ -45,7 +51,9 @@ const dbConfig: DBConfig  = {
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    NgxIndexedDBModule.forRoot(dbConfig)
+    NgxIndexedDBModule.forRoot(dbConfig),
+    BrowserAnimationsModule, MatCardModule, MatButtonModule, MatInputModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [
     MarkerService,

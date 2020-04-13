@@ -20,21 +20,13 @@ export class LoadMapService {
             if (list.includes(placeId)) {
               this.saveVisit(Visit.fromPlaceVisit(c.placeVisit));
             } else {
-              this.savePlace(Place.fromPlaceVisit(c.placeVisit));
+              let place = Place.fromPlaceVisit(c.placeVisit);
+              this.dbService.add('places', place);
+              list.push(place);
               this.saveVisit(Visit.fromPlaceVisit(c.placeVisit));
             }
           }
         }
-      }
-    );
-  }
-
-  private savePlace(p: Place) {
-    this.dbService.add('places', p).then(
-      () => {
-      },
-      error => {
-        console.error("failed to add", error);
       }
     );
   }
