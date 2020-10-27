@@ -3,6 +3,7 @@ import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import * as L from 'leaflet';
 import { MarkerService } from "../marker.service";
 import {LoadMapService} from "../load-map.service";
+import {LocationService} from "../services/location.service";
 
 @Component({
   selector: 'app-map',
@@ -14,9 +15,15 @@ export class MapComponent implements AfterViewInit {
   private uploadedFiles: Array <File>;
 
   constructor(private loadMapService: LoadMapService,
+              private locationService: LocationService,
               private  markerService: MarkerService) { }
 
   ngAfterViewInit(): void {
+    this.locationService.getPosition().then(pos=>
+    {
+      console.log(`Positon: ${pos.lng} ${pos.lat}`);
+      this.map.flyTo([pos.lat, pos.lng], 8);
+    });
     this.initMap();
     this.markerService.makePointMarkers(this.map);
   }
@@ -28,7 +35,7 @@ export class MapComponent implements AfterViewInit {
   private initMap(): void {
     this.map = L.map('map', {
       center: [ 45.7516, 5.1912 ],
-      zoom: 6
+      zoom: 3
     });
     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
