@@ -16,6 +16,8 @@ import { environment } from '../environments/environment';
 import {MatButtonModule} from "@angular/material/button";
 import {MatCardModule} from "@angular/material/card";
 import {MatInputModule} from "@angular/material/input";
+import {MatRadioModule} from "@angular/material/radio";
+import {FormsModule} from "@angular/forms";
 
 const dbConfig: DBConfig  = {
   name: 'DB_PLACES',
@@ -53,7 +55,7 @@ const dbConfig: DBConfig  = {
     HttpClientModule,
     NgxIndexedDBModule.forRoot(dbConfig),
     BrowserAnimationsModule, MatCardModule, MatButtonModule, MatInputModule,
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
+    ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}), MatRadioModule, FormsModule
   ],
   providers: [
     MarkerService,

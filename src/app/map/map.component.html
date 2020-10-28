@@ -4,6 +4,16 @@
     <input (change)="fileChange($event)" type="file" multiple>
     <button mat-raised-button (click)="upload()" >Upload</button>
   </div>
+  <div>
+    <mat-radio-group
+      aria-labelledby="radio-group-label"
+      class="example-radio-group"
+      [(ngModel)]="selectedMode">
+      <mat-radio-button class="radio-button" *ngFor="let clickMode of clickModes" [value]="clickMode">
+        {{clickMode}}
+      </mat-radio-button>
+    </mat-radio-group>
+  </div>
   <div class="map-container">
     <div class="map-frame">
       <div id="map"></div>
