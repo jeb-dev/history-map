@@ -2,10 +2,10 @@ import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 
 import * as L from 'leaflet';
 import toGeoJson from 'togeojson';
+import { GeoUtils } from './geo-utils';
 import { MarkerService } from "../marker.service";
 import {LoadMapService} from "../load-map.service";
 import {LocationService} from "../services/location.service";
-import {collectExternalReferences} from "@angular/compiler";
 
 @Component({
   selector: 'app-map',
@@ -15,8 +15,9 @@ import {collectExternalReferences} from "@angular/compiler";
 export class MapComponent implements AfterViewInit {
   private map;
   private uploadedFiles: Array <File>;
-  selectedMode: 'Slice' | 'Watch' = 'Watch';
-  clickModes: string[] = ['Slice', 'Watch'];
+  private buildCoordiates = [];
+  selectedMode: 'Slice' | 'Watch' | 'Build' = 'Watch';
+  clickModes: string[] = ['Slice', 'Watch', 'Build'];
 
   constructor(private loadMapService: LoadMapService,
               private locationService: LocationService,
@@ -67,23 +68,25 @@ export class MapComponent implements AfterViewInit {
 
   private addLinesFromGPXstr(str: string) {
     var geojsonFeature = toGeoJson.gpx((new DOMParser()).parseFromString(str, 'text/xml'));
+    let name = geojsonFeature.features[0].properties.name;
     let coordinates = geojsonFeature.features[0].geometry.coordinates;
+    let color = "#4488FF";
+    this.addLineFromCoordinates(name, coordinates, color);
+  }
 
+  private addLineFromCoordinates(name, coordinates, color: string) {
     var features = [{
       "type": "Feature",
-      "properties": {"party": "ONE"},
+      "properties": {
+        "name": name,
+      },
       "geometry": {
         "type": "LineString",
-        "coordinates": coordinates
+        "coordinates": coordinates,
       }
     }];
     let geoJSON = L.geoJSON(features, {
-      style: function (feature) {
-        switch (feature.properties.party) {
-          case 'ONE':
-            return {color: "#4488FF"};
-        }
-      }
+      style: {color: color}
     });
     geoJSON.addTo(this.map);
     geoJSON.on('click', (e) => {
@@ -96,44 +99,36 @@ export class MapComponent implements AfterViewInit {
       let coordinates = e.layer.feature.geometry.coordinates;
       let closestIndex = this.findClosestIndex(e.latlng, e.layer.feature.geometry.coordinates);
       e.layer.remove();
-      this.addLines(coordinates.slice(0, closestIndex), coordinates.slice(closestIndex, coordinates.length));
+      this.addLineFromCoordinates(e.layer.feature.properties.name + "-1",
+        coordinates.slice(0, closestIndex),
+        "#ff4400");
+      this.addLineFromCoordinates(e.layer.feature.properties.name + "-2",
+        coordinates.slice(closestIndex, coordinates.length),
+        "#eeFF00");
+    } else if (this.selectedMode == "Build"){
+      let newCrdnt = e.layer.feature.geometry.coordinates;
+      if(this.buildCoordiates.length == 0){
+        this.buildCoordiates = newCrdnt;
+      } else {
+        let lastPoint = this.buildCoordiates[this.buildCoordiates.length -1];
+        let firstNew = newCrdnt[0];
+        let lastNew = newCrdnt[newCrdnt.length -1];
+        let dist1 = GeoUtils.distanceFromCrdnt(lastPoint, firstNew);
+        let dist2 = GeoUtils.distanceFromCrdnt(lastPoint, lastNew);
+        if(dist1 < dist2){
+          this.buildCoordiates = this.buildCoordiates.concat(newCrdnt);
+        } else {
+          this.buildCoordiates = this.buildCoordiates.concat(newCrdnt.reverse());
+        }
+      }
+      this.addLineFromCoordinates("Build", this.buildCoordiates, "#E20")
     } else {
-      console.log('Watch!!');
+      console.log(e.layer.feature.properties.name);
     }
   }
 
-  private addLines(firstSlice, secondSlice) {
-    var features = [{
-      "type": "Feature",
-      "properties": {"party": "ONE"},
-      "geometry": {
-        "type": "LineString",
-        "coordinates": firstSlice,
-      }
-    }, {
-      "type": "Feature",
-      "properties": {"party": "TWO"},
-      "geometry": {
-        "type": "LineString",
-        "coordinates": secondSlice,
-      }
-    }];
-    L.geoJSON(features, {
-      style: function (feature) {
-        switch (feature.properties.party) {
-          case 'ONE':
-            return {color: "#ff4400"};
-          case 'TWO':
-            return {color: "#eeFF00"};
-        }
-      }
-    }).on('click', (e) => {
-      this.clickLine(e);
-    }).addTo(this.map);
-  }
-
   private findClosestIndex(goal, arr) {
-    var indexArr = arr.map((k) => Math.abs(k[1] - goal.lat))
+    var indexArr = arr.map((k) => GeoUtils.distanceFromCrdnt(k, [goal.lng, goal.lat]))
     var min = Math.min.apply(Math, indexArr)
     return indexArr.indexOf(min);
   }
@@ -149,7 +144,6 @@ export class MapComponent implements AfterViewInit {
       let fileReader = new FileReader();
       if(this.uploadedFiles[i].name.endsWith(".gpx")){
         fileReader.onload = (e) => {
-          debugger
           let toString = fileReader.result.toString();
           this.addLinesFromGPXstr(toString);
         }
