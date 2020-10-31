@@ -1,3 +1,5 @@
+import { getDistance } from "ol/sphere";
+
 export class GeoUtils {
   public static distance(lat1, lon1, lat2, lon2) {
     if ((lat1 == lat2) && (lon1 == lon2)) {
@@ -20,6 +22,12 @@ export class GeoUtils {
   }
 
   public static distanceFromCrdnt(point1, point2) {
-    return this.distance(point1[0], point1[1], point2[0], point2[1]);
+    return getDistance(point1, point2)
+  }
+
+  public static elevation(point1, point2){
+    let alt1 = point1[2];
+    let alt2 = point2[2];
+    return alt1<alt2 ? alt2 - alt1 : 0;
   }
 }

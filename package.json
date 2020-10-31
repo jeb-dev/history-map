@@ -25,6 +25,7 @@
     "leaflet": "1.5.1",
     "@mapbox/togeojson": "^0.16.0",
     "leaflet-omnivore": "0.3.4",
+    "ol": "^6.4.3",
     "ngx-indexed-db": "~4.0.14",
     "rxjs": "~6.5.5",
     "tslib": "^1.10.0",
