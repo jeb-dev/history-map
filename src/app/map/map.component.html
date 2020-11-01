@@ -1,10 +1,10 @@
 <div class="container">
   <div>
-    <button mat-raised-button (click)="reloadMap()">Reload Map</button>
-    <input (change)="fileChange($event)" type="file" multiple>
-    <button mat-raised-button (click)="upload()" >Upload</button>
+    <!--<button mat-raised-button (click)="reloadMap()">Reload Map</button>-->
+    <input (change)="fileChange($event)" type="file" multiple accept=".gpx">
     <button mat-raised-button (click)="download()" >Download</button>
-    <button mat-raised-button (click)="reset()" >Rest</button>
+    <button mat-raised-button (click)="reset()" >Reset</button>
+    <button mat-raised-button (click)="resetBuild()" >Reset Build</button>
   </div>
   <div>
     <mat-radio-group

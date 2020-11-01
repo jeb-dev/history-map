@@ -8,7 +8,7 @@ import { MapComponent } from './map/map.component';
 import {PopUpService} from "./pop-up.service";
 
 import {DBConfig, NgxIndexedDBModule} from 'ngx-indexed-db';
-import {LoadMapService} from "./load-map.service";
+import {LoadDataService} from "./load-data.service";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
@@ -45,7 +45,7 @@ const dbConfig: DBConfig  = {
   ],
   providers: [
     PopUpService,
-    LoadMapService
+    LoadDataService
   ],
   bootstrap: [AppComponent]
 })
