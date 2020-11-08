@@ -12,7 +12,7 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 ## Build github pages
 
-Run `ng build --prod=true --outputPath=docs` 
+Run `ng build --prod=true --outputPath=docs --baseHref=https://jeb-dev.github.io/history-map/` 
 
 ## Further help
 
